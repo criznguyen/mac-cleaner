@@ -1,19 +1,19 @@
 # Mac Cleaner CLI
 
-Ung dung dong lenh quet va don dep du lieu rac tren macOS. Viet bang Swift, chay native khong can cai them thu vien.
+A native macOS command-line tool for scanning and cleaning junk data. Built with Swift, no external runtime required.
 
-## Cai dat
+## Installation
 
-### Build tu source
+### Build from source
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/criznguyen/mac-cleaner.git
 cd mac-cleaner
 swift build -c release
 cp .build/release/mac-cleaner /usr/local/bin/mac-cleaner
 ```
 
-Hoac cai vao thu muc user:
+Or install to user directory:
 
 ```bash
 mkdir -p ~/bin
@@ -22,18 +22,18 @@ echo 'export PATH="$HOME/bin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
-## Su dung
+## Usage
 
-### Quet du lieu rac
+### Scan for junk data
 
 ```bash
 mac-cleaner scan
 ```
 
-Ket qua hien thi tung item voi ID de xoa chon loc:
+Each item is assigned an ID for selective deletion:
 
 ```
-📋 Chi tiet tung muc:
+📋 Item details:
 
   ▸ Xcode Derived Data
     [1]   1.51 MB     ~/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex
@@ -44,17 +44,17 @@ Ket qua hien thi tung item voi ID de xoa chon loc:
     [4]   190.21 MB   ~/Library/Caches/Homebrew/downloads
     [5]   12.30 MB    ~/Library/Caches/Homebrew/Cask
 
-📊 Tong hop theo danh muc:
+📊 Summary by category:
 
-  Danh muc                 Kich thuoc    So muc
-  ───────────────────────────────────────────────────────
-  Xcode Derived Data       365.73 MB     3 items
-  Homebrew Cache           202.51 MB     2 items
-  ───────────────────────────────────────────────────────
-  TONG CONG                568.24 MB
+  Shortname     Category              Size          Items
+  ────────────────────────────────────────────────────────────────────
+  xcode         Xcode Derived Data    365.73 MB     3 items
+  brew          Homebrew Cache        202.51 MB     2 items
+  ────────────────────────────────────────────────────────────────────
+                TOTAL                 568.24 MB
 ```
 
-### Quet theo danh muc
+### Scan by category
 
 ```bash
 mac-cleaner scan -c xcode
@@ -62,50 +62,58 @@ mac-cleaner scan -c caches
 mac-cleaner scan -c logs
 ```
 
-### Xoa theo ID
+### Remove by ID
 
-Sau khi `scan`, xoa chon loc theo ID:
-
-```bash
-mac-cleaner remove 1 3 5          # xoa item co ID 1, 3, 5
-mac-cleaner remove 1-10           # xoa tat ca ID tu 1 den 10
-mac-cleaner remove 1-5 8 12-15   # ket hop khoang va ID don le
-mac-cleaner remove 2 --dry-run    # chay thu, khong xoa that
-mac-cleaner remove 2 --force      # xoa ngay khong can xac nhan
-```
-
-### Xoa tat ca
+After scanning, selectively remove items by ID:
 
 ```bash
-mac-cleaner clean                  # quet + hoi xac nhan roi xoa
-mac-cleaner clean --dry-run        # chay thu
-mac-cleaner clean --force          # xoa ngay
-mac-cleaner clean -c trash         # chi xoa Trash
+mac-cleaner remove 1 3 5          # remove items with ID 1, 3, 5
+mac-cleaner remove 1-10           # remove all IDs from 1 to 10
+mac-cleaner remove 1-5 8 12-15   # combine ranges and individual IDs
+mac-cleaner remove 2 --dry-run    # preview without actually deleting
+mac-cleaner remove 2 --force      # skip confirmation prompt
 ```
 
-### Liet ke danh muc
+### Remove by category name
+
+```bash
+mac-cleaner remove caches         # remove all user caches
+mac-cleaner remove npm docker     # remove npm cache + Docker data
+mac-cleaner remove caches 3 5     # combine category names and IDs
+```
+
+### Clean all
+
+```bash
+mac-cleaner clean                  # scan + confirm + delete all
+mac-cleaner clean --dry-run        # preview only
+mac-cleaner clean --force          # skip confirmation
+mac-cleaner clean -c trash         # clean only Trash
+```
+
+### List categories
 
 ```bash
 mac-cleaner list
 ```
 
-## Danh muc ho tro
+## Supported Categories
 
-| Danh muc      | Mo ta                                              |
+| Category      | Description                                        |
 |---------------|----------------------------------------------------|
-| `caches`      | ~/Library/Caches — cache cua ung dung               |
-| `logs`        | ~/Library/Logs — log ung dung                        |
-| `xcode`       | Xcode Derived Data + Archives                        |
-| `trash`       | ~/.Trash — thung rac                                 |
-| `brew`        | ~/Library/Caches/Homebrew — cache Homebrew           |
-| `npm`         | ~/.npm — cache Node.js packages                      |
-| `yarn`        | ~/Library/Caches/Yarn — cache Yarn                   |
-| `pods`        | ~/Library/Caches/CocoaPods — cache CocoaPods         |
-| `docker`      | ~/Library/Containers/com.docker.docker — Docker data |
-| `ios-backup`  | ~/Library/Application Support/MobileSync/Backup      |
-| `crash`       | ~/Library/Logs/DiagnosticReports — crash reports     |
+| `caches`      | ~/Library/Caches — application caches              |
+| `logs`        | ~/Library/Logs — application logs                   |
+| `xcode`       | Xcode Derived Data + Archives                       |
+| `trash`       | ~/.Trash — trash bin                                |
+| `brew`        | ~/Library/Caches/Homebrew — Homebrew cache          |
+| `npm`         | ~/.npm — Node.js package cache                      |
+| `yarn`        | ~/Library/Caches/Yarn — Yarn cache                  |
+| `pods`        | ~/Library/Caches/CocoaPods — CocoaPods cache        |
+| `docker`      | ~/Library/Containers/com.docker.docker — Docker data|
+| `ios-backup`  | ~/Library/Application Support/MobileSync/Backup     |
+| `crash`       | ~/Library/Logs/DiagnosticReports — crash reports    |
 
-## Cau truc project
+## Project Structure
 
 ```
 mac-cleaner/
@@ -113,22 +121,22 @@ mac-cleaner/
 └── Sources/mac-cleaner/
     ├── mac_cleaner.swift    — CLI entry point (scan, clean, remove, list)
     ├── Scanner.swift        — 12 scanner modules + ScanItem/ScanCache
-    ├── Cleaner.swift        — Logic xoa file/folder theo ID hoac tat ca
-    └── Utilities.swift      — Format bytes, ANSI colors, helpers
+    ├── Cleaner.swift        — Deletion logic by ID or category
+    └── Utilities.swift      — Byte formatting, ANSI colors, helpers
 ```
 
-## Yeu cau
+## Requirements
 
 - macOS 13+
 - Swift 6.2+ (Xcode 16+)
 
-## Luu y
+## Notes
 
-- Lenh `scan` chi hien thi, khong xoa bat ky thu gi
-- Lenh `remove` cho phep chon chinh xac item can xoa theo ID
-- Dung `--dry-run` de xem truoc nhung gi se bi xoa
-- Docker Data co the rat lon — can than khi xoa neu ban van dang dung Docker
-- iOS Backups nen duoc kiem tra truoc khi xoa de tranh mat du lieu quan trong
+- `scan` only displays results — it does not delete anything
+- `remove` allows precise selection by item ID or category name
+- Use `--dry-run` to preview what will be deleted before committing
+- Docker Data can be very large — be careful if you still use Docker
+- iOS Backups should be reviewed before deletion to avoid data loss
 
 ## License
 
