@@ -10,14 +10,14 @@ A native macOS command-line tool for scanning and cleaning junk data. Built with
 git clone https://github.com/criznguyen/mac-cleaner.git
 cd mac-cleaner
 swift build -c release
-cp .build/release/mac-cleaner /usr/local/bin/mac-cleaner
+cp .build/release/mc /usr/local/bin/mc
 ```
 
 Or install to user directory:
 
 ```bash
 mkdir -p ~/bin
-cp .build/release/mac-cleaner ~/bin/mac-cleaner
+cp .build/release/mc ~/bin/mc
 echo 'export PATH="$HOME/bin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 ```
@@ -27,7 +27,7 @@ source ~/.zshrc
 ### Scan for junk data
 
 ```bash
-mac-cleaner scan
+mc scan
 ```
 
 Each item is assigned an ID for selective deletion:
@@ -57,9 +57,9 @@ Each item is assigned an ID for selective deletion:
 ### Scan by category
 
 ```bash
-mac-cleaner scan -c xcode
-mac-cleaner scan -c caches
-mac-cleaner scan -c logs
+mc scan -c xcode
+mc scan -c caches
+mc scan -c logs
 ```
 
 ### Remove by ID
@@ -67,34 +67,34 @@ mac-cleaner scan -c logs
 After scanning, selectively remove items by ID:
 
 ```bash
-mac-cleaner remove 1 3 5          # remove items with ID 1, 3, 5
-mac-cleaner remove 1-10           # remove all IDs from 1 to 10
-mac-cleaner remove 1-5 8 12-15   # combine ranges and individual IDs
-mac-cleaner remove 2 --dry-run    # preview without actually deleting
-mac-cleaner remove 2 --force      # skip confirmation prompt
+mc remove 1 3 5          # remove items with ID 1, 3, 5
+mc remove 1-10           # remove all IDs from 1 to 10
+mc remove 1-5 8 12-15   # combine ranges and individual IDs
+mc remove 2 --dry-run    # preview without actually deleting
+mc remove 2 --force      # skip confirmation prompt
 ```
 
 ### Remove by category name
 
 ```bash
-mac-cleaner remove caches         # remove all user caches
-mac-cleaner remove npm docker     # remove npm cache + Docker data
-mac-cleaner remove caches 3 5     # combine category names and IDs
+mc remove caches         # remove all user caches
+mc remove npm docker     # remove npm cache + Docker data
+mc remove caches 3 5     # combine category names and IDs
 ```
 
 ### Clean all
 
 ```bash
-mac-cleaner clean                  # scan + confirm + delete all
-mac-cleaner clean --dry-run        # preview only
-mac-cleaner clean --force          # skip confirmation
-mac-cleaner clean -c trash         # clean only Trash
+mc clean                  # scan + confirm + delete all
+mc clean --dry-run        # preview only
+mc clean --force          # skip confirmation
+mc clean -c trash         # clean only Trash
 ```
 
 ### List categories
 
 ```bash
-mac-cleaner list
+mc list
 ```
 
 ## Supported Categories
@@ -116,9 +116,9 @@ mac-cleaner list
 ## Project Structure
 
 ```
-mac-cleaner/
+mc/
 ├── Package.swift
-└── Sources/mac-cleaner/
+└── Sources/mc/
     ├── mac_cleaner.swift    — CLI entry point (scan, clean, remove, list)
     ├── Scanner.swift        — 12 scanner modules + ScanItem/ScanCache
     ├── Cleaner.swift        — Deletion logic by ID or category

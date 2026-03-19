@@ -4,7 +4,7 @@ import Foundation
 @main
 struct MacCleaner: ParsableCommand {
     static let configuration = CommandConfiguration(
-        commandName: "mac-cleaner",
+        commandName: "mc",
         abstract: "Quét và dọn dẹp dữ liệu rác trên macOS",
         version: "1.0.0",
         subcommands: [Scan.self, Clean.self, Remove.self, List.self],
@@ -33,10 +33,10 @@ extension MacCleaner {
             // Save scan results for `remove` command
             let allItems = results.flatMap(\.items)
             ScanCache.save(items: allItems)
-            print(colored("Tip: mac-cleaner remove 1 3 5       — xóa theo ID", .dim))
-            print(colored("     mac-cleaner remove 1-10        — xóa theo khoảng ID", .dim))
-            print(colored("     mac-cleaner remove caches npm  — xóa theo danh mục", .dim))
-            print(colored("     mac-cleaner remove caches 3 5  — kết hợp cả hai", .dim))
+            print(colored("Tip: mc remove 1 3 5       — xóa theo ID", .dim))
+            print(colored("     mc remove 1-10        — xóa theo khoảng ID", .dim))
+            print(colored("     mc remove caches npm  — xóa theo danh mục", .dim))
+            print(colored("     mc remove caches 3 5  — kết hợp cả hai", .dim))
             print()
         }
     }
@@ -117,7 +117,7 @@ extension MacCleaner {
             printBanner()
 
             guard let cachedItems = ScanCache.load(), !cachedItems.isEmpty else {
-                print(colored("⚠ Chưa có kết quả scan. Hãy chạy `mac-cleaner scan` trước.\n", .yellow))
+                print(colored("⚠ Chưa có kết quả scan. Hãy chạy `mc scan` trước.\n", .yellow))
                 return
             }
 
@@ -206,12 +206,12 @@ extension MacCleaner {
                 print("  \(colored(key.padding(toLength: 14, withPad: " ", startingAt: 0), .cyan))\(desc)")
             }
             print("\nSử dụng:")
-            print("  \(colored("mac-cleaner scan", .green))                  Quét tất cả")
-            print("  \(colored("mac-cleaner scan -c xcode", .green))         Quét theo danh mục")
-            print("  \(colored("mac-cleaner remove 1 3 5", .green))          Xóa theo ID")
-            print("  \(colored("mac-cleaner remove 1-10", .green))           Xóa theo khoảng ID")
-            print("  \(colored("mac-cleaner clean", .green))                 Xóa tất cả")
-            print("  \(colored("mac-cleaner clean --dry-run", .green))       Chạy thử")
+            print("  \(colored("mc scan", .green))                  Quét tất cả")
+            print("  \(colored("mc scan -c xcode", .green))         Quét theo danh mục")
+            print("  \(colored("mc remove 1 3 5", .green))          Xóa theo ID")
+            print("  \(colored("mc remove 1-10", .green))           Xóa theo khoảng ID")
+            print("  \(colored("mc clean", .green))                 Xóa tất cả")
+            print("  \(colored("mc clean --dry-run", .green))       Chạy thử")
             print()
         }
     }

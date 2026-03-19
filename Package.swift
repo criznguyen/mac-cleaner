@@ -10,7 +10,7 @@ let package = Package(
     ],
     targets: [
         .executableTarget(
-            name: "mac-cleaner",
+            name: "mc",
             dependencies: [
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ]
